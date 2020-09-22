@@ -1,0 +1,29 @@
+MT ,,-2
+CE ,,0
+KP ,,0
+KD ,,0
+KI ,,0
+DP ,,0
+FV ,,0
+FA ,,0
+PL ,,0
+#C
+SH C
+WT 200
+DP ,,0
+WT 100
+AC ,,100000
+DC ,,100000
+SP ,,30000
+#LOOP
+PA ,,900000
+BG C
+AM C
+WT 250
+PA ,,0
+'SP,,10000
+BG C
+AM C
+WT 250
+'JP#LOOP
+EN

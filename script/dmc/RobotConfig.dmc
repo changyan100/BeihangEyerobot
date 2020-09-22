@@ -1,0 +1,70 @@
+#LOADSET
+' ip of the controller - 169.254.11.5
+MO
+
+MG"HELLO"{L1},"EYEROBOT2"{L2}
+' A is the lift screw maxon RE16 motor
+' B is the slider maxon RE25 motor
+' C is the ROTY
+' D is Z
+'change the servo loop update time
+'TM1000;
+'Motor Type , Servo = 1
+MT-1,-1,-2,-2.5;
+
+'set limit switches low or active high, check this when doing homing
+CN,,,1;
+'Limit Disable ( 0 is enabled) Soft limits BL and FL are still in effect.
+'(0 enabled, 1 forward disabled, 2 reverse disabled, 3 both disabled)
+'Soft limits BL and FL are still in effect.
+'not burned into the eeprom.
+LD,,,0;
+'set soft limits here
+BL -51200,-280000,-250000,-300000;
+FL 51200,72000,250000,300000;
+
+'off on error
+OE1,1,1,3;
+'Configure Encoders
+CE0,0,0,0;
+'servo loop settings
+'XYZ Max motor speed(rpm)    8200rpm in counts    33587200
+'counts/rev 4096
+'count/mm 3522.56
+KP90,15,0,0;
+KD480,50,0,0;
+KI0,0,0,0;
+'integrator limits
+IL0,0,0,0;
+FA10,0,0,0;
+FV10,0,0,0;
+PL0,0,0,0;
+'pid loop offset only used for break.
+OF0,0,0,0;
+
+'torque limits IN VOLTS - see above for conversions
+TL6,6;
+'peak torque limits
+'todo might up the other motors to 9.99
+TK9.999,9.999;
+' error limits, if the acceleration or speed are set above system capability
+' these might be triggered
+' or if the system is stuck
+ER200,200,1000,1000;
+
+'Homing velocities
+'HV1000,1000,1000,0,2000,10000,0,0;
+'accelerations and decelerations
+'Do to tm250 we need to multiply input to get correct velocity x 16
+'axis E can run faster but slowed it down for interaction
+'stability to match others
+AC300000,400000,100000,500000;
+DC300000,400000,100000,500000;
+'Maximum velocities
+SP25000,40000,30000,30000;
+
+MG "READY!"
+
+WT3000;
+
+EN;
