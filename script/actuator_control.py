@@ -10,6 +10,10 @@ import numpy as np
 import actuator_homing
 import galil_ipaddress
 from termcolor import colored  #for print in color
+from math import cos
+from math import acos
+from math import pi
+
 
 
 class actuator_control():
@@ -42,8 +46,17 @@ class actuator_control():
         joint_value[1] = actuator_value[1]/10000 #unit: degree  ---temp value, need update!!
         joint_value[2] = actuator_value[2]/10000 #unit: mm
         joint_value[3] = actuator_value[3]/2500  #unit: degree
-        joint_value[4] = actuator_value[4]/4000  #unit: mm
-        joint_value[5] = actuator_value[5]/2048  #unit: mm  for RE16 motor --need update!!
+        
+        #calculate q5 q6 from RCM structure parameters x1 x2 
+        x1 = actuator_value[4]/4000  #unit: mm  for RE25 motor
+        x2 = actuator_value[5]/2048  #unit: mm  for RE16 motor --need update!!
+        rcm_b = 70 #unit: mm; distance from rcm slider joint to middle plane joint
+        cos_theta = (x1**2+x2**2-rcm_b**2)/(2*x1*x2)
+        q5 = acos(cos_theta)-pi/2
+        q6 = x2-50
+
+        joint_value[4] = q5  #unit: degree, rcm pivot rotate
+        joint_value[5] = q6  #unit: mm , rcm insert/retract
         return joint_value
 
 
@@ -53,8 +66,22 @@ class actuator_control():
         actuator_value[1] = joint_value[1]*10000 #unit: degree; scara arm 1 ---temp value, need update!!
         actuator_value[2] = joint_value[2]*10000 #unit: mm;     Z prismatic joint
         actuator_value[3] = joint_value[3]*2500  #unit: degree; rotY joint
-        actuator_value[4] = joint_value[4]*4000  #unit: mm;     RE25 motor, linear motion for rcm mechanism
-        actuator_value[5] = joint_value[5]*2048  #unit: mm;     for RE16 motor --need update!!
+        
+        #calculate rcm structure parameter x1 x2 from q5 q6
+        q5 = joint_value[4]
+        q6 = joint_value[5]
+        rcm_b = 70
+        x2 = q6+50
+        a = 1
+        b = -2*cos(q5+pi/2)*x2
+        c = x2**2-rcm_b**2
+        x1 = (-b+(4*a*c)**0.5)/(2*a)
+
+        if x1<0:
+          print(colored('[ERROR] kinematic calculate error, actuator x1 position is negative'+str(x1), 'red'))
+
+        actuator_value[4] = x1*4000  #unit: mm;     RE25 motor, linear motion for rcm mechanism
+        actuator_value[5] = x2*2048  #unit: mm;     for RE16 motor --need update!!
         return actuator_value
 
     def actuator_jog(self, joint_vel): #joint jog motion - velocity control
@@ -90,7 +117,7 @@ class actuator_control():
 
 
 
-    def tell_jointposition(): #tell joints absolute positon
+    def tell_jointposition(self): #tell joints absolute positon
         # TP returns value of position encoder in string form with unit of 'cts'
         actuator_postion = np.zeros(6)
         actuator_postion[0] = float(self.g.GCommand('TP A')) #scara arm motor 1
@@ -103,7 +130,7 @@ class actuator_control():
         joint_position = self.actuator2joint(actuator_postion)
         return joint_position
 
-    def tell_jointvel(): #tell joints velocity
+    def tell_jointvelocity(self): #tell joints velocity
         # TP returns value of position encoder in string form with unit of 'cts'
         actuator_vel = np.zeros(6)
         actuator_vel[0] = float(self.g.GCommand('TV A')) #scara arm motor 1
@@ -151,10 +178,10 @@ class actuator_control():
         return switcher.get(stopcode,"Invalid stopcode")
 
 
-    def actuator_stop():
+    def actuator_stop(self):
         self.g.GCommand('ST') #stop motion
 
-    def actuator_off():
+    def actuator_off(self):
         self.g.GCommand('MO') #stop motion
 
     def disconnect(self):
@@ -164,14 +191,15 @@ class actuator_control():
         self.g.GClose()
 
 
-
 #runs main() if example.py called from the console
 if __name__ == '__main__':
     ac = actuator_control()
     joint_vel = np.zeros(6)
-    joint_vel[3] = 10
+    joint_vel[4] = 2
+    i = 0
     while 1:
-      ac.actuator_jog(joint_vel)
-      ac.actuator_checkrunning()
+      i = i+1
+    #   ac.actuator_jog(joint_vel)
+    #   ac.actuator_checkrunning()
 
 
