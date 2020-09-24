@@ -34,7 +34,6 @@ class robot_model():
 		q5 = joint_value[4]
 		q6 = joint_value[5]
 
-
 		tx_0tip = self.r234*sin(q1+q2)+self.r1*sin(q1)-(ly*cos(q1+q2)*cos(q4+q5))/2-(lz*cos(q1+q2)*sin(q4+q5))/2+(q6*cos(q1+q2)*sin(q4+q5))/2+lx*cos(q1+q2)*cos(q4)-ly*sin(q1+q2)*cos(q5)-lz*sin(q1+q2)*sin(q5)+q6*sin(q1+q2)*sin(q5)+(ly*cos(q4-q5)*cos(q1+q2))/2-(lz*sin(q4-q5)*cos(q1+q2))/2+(q6*sin(q4-q5)*cos(q1+q2))/2
 		ty_0tip =  (q6*sin(q1+q2)*sin(q4+q5))/2-self.r1*cos(q1)-(ly*cos(q4+q5)*sin(q1+q2))/2-(lz*sin(q1+q2)*sin(q4+q5))/2-self.r234*cos(q1+q2)+ly*cos(q1+q2)*cos(q5)+lx*sin(q1+q2)*cos(q4)+lz*cos(q1+q2)*sin(q5)-q6*cos(q1+q2)*sin(q5)+(ly*cos(q4-q5)*sin(q1+q2))/2-(lz*sin(q4-q5)*sin(q1+q2))/2+(q6*sin(q4-q5)*sin(q1+q2))/2
 		tz_0tip = q3-lx*sin(q4)-lz*cos(q4)*cos(q5)+q6*cos(q4)*cos(q5)+ly*cos(q4)*sin(q5)
@@ -149,23 +148,152 @@ class robot_model():
 		return E03
       
  
-	def invkin0tip(self, tip_offset):
+	def invkin_0tip(self, tip_offset):
 		# To do: calculate inverse kinematics for joint 0-tip here
 		pass
 
-	def invkin03(self, tip_offset):
+	def invkin_03(self, tip_offset):
 		# To do: calculate inverse kinematics for joint 0-3 here
 		pass
 
-	def invkin3tip(self, tip_offset):
+	def invkin_3tip(self, tip_offset):
 		# To do: calculate inverse kinematics for joint 3-tip here
 		pass
 
-	def jacobian():
-		pass
+	def jacobian_0tip(self, joint_value):
+		# Jacobian matrix from joint 0 to end effector tip
+		q1 = joint_value[0]
+		q2 = joint_value[1]
+		q3 = joint_value[2]
+		q4 = joint_value[3]
+		q5 = joint_value[4]
+		q6 = joint_value[5]
 
-	def invjacobian():
-		pass
+		j11 = self.r234*cos(q1+q2)+self.r1*cos(q1)-(q6*sin(q1+q2)*sin(q4+q5))/2+q6*cos(q1+q2)*sin(q5)-(q6*sin(q4-q5)*sin(q1+q2))/2
+		j12 = self.r234*cos(q1+q2)-(q6*sin(q1+q2)*sin(q4+q5))/2+q6*cos(q1+q2)*sin(q5)-(q6*sin(q4-q5)*sin(q1+q2))/2
+		j15 = sin(q4)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)+q6*sin(q1+q2)*cos(q4)^2*cos(q5)
+		j21 = self.r234*sin(q1+q2)+self.r1*sin(q1)+(q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2
+		j22 = self.r234*sin(q1+q2)+(q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2
+		j25 = -sin(q4)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)-q6*cos(q1+q2)*cos(q4)^2*cos(q5)
+		j34 = -cos(q1+q2)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)-sin(q1+q2)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)
+		j35 = cos(q1+q2)*cos(q4)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)-sin(q1+q2)*cos(q4)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)
+
+		J06 = np.zeros([6,6])
+		J06[0,0] = j11
+		J06[0,1] = j12
+		J06[0,2] = 0
+		J06[0,3] = q6*cos(q1+q2)*cos(q4)*cos(q5)
+		J06[0,4] = j15
+		J06[0,5] = sin(q1+q2)*sin(q5)+cos(q1+q2)*cos(q5)*sin(q4)
+
+		J06[1,0] = j21
+		J06[1,1] = j22
+		J06[1,2] = 0
+		J06[1,3] = q6*sin(q1+q2)*cos(q4)*cos(q5)
+		J06[1,4] = j25
+		J06[1,5] = sin(q1+q2)*cos(q5)*sin(q4)-cos(q1+q2)*sin(q5)
+
+		J06[2,0] = 0
+		J06[2,1] = 0
+		J06[2,2] = 1
+		J06[2,3] = j34
+		J06[2,4] = j35
+		J06[2,5] = cos(q4)*cos(q5)
+
+		J06[3,0] = 0
+		J06[3,1] = 0
+		J06[3,2] = 0
+		J06[3,3] = -sin(q1+q2)
+		J06[3,4] = cos(q1+q2)*cos(q4)
+		J06[3,5] = 0
+
+		J06[4,0] = 0
+		J06[4,1] = 0
+		J06[4,2] = 0
+		J06[4,3] = cos(q1+q2)
+		J06[4,4] = sin(q1+q2)*cos(q4)
+		J06[4,5] = 0
+
+		J06[5,0] = 1
+		J06[5,1] = 1
+		J06[5,2] = 0
+		J06[5,3] = 0
+		J06[5,4] = -sin(q4)
+		J06[5,5] = 0
+		
+		return J06
+
+	def invjacobian_0tip(self, joint_value):
+		J06 = self.jacobian_0tip(joint_value)
+		J06_inv = np.linalg.inv(J06)
+		return J06_inv
+
+
+	def jacobian_03(self, joint_value):
+		# Jacobian matrix from joint 0 to 3
+		# [vx, vy, vz] = J03*[q1_dot, q2_dot, q3_dot]
+		q1 = joint_value[0]
+		q2 = joint_value[1]
+		q3 = joint_value[2]
+		q4 = joint_value[3]
+		q5 = joint_value[4]
+		q6 = joint_value[5]
+
+		J03 = np.zeros([3,3])
+		J03[0,0] = -self.r1*sin(q1)-r234*sin(q1+q2)
+		J03[0,1] = -r234*sin(q1+q2)
+		J03[0,2] = 0
+
+		J03[1,0] = self.r1*cos(q1)+r234*cos(q1+q2) 
+		J03[1,1] = self.r234*cos(q1+q2)
+		J03[1,2] = 0
+
+		J03[2,0] = 0
+		J03[2,1] = 0
+		J03[2,2] = 1
+
+		return J03
+
+	def invjacobian_03(self, joint_value):
+		# Inverse Jacobian matrix from joint 0 to 3
+		# J03_inv*[vx, vy, vz] = [q1_dot, q2_dot, q3_dot]
+		J03 = self.jacobian_03(joint_value)
+		J03_inv = np.linalg.inv(J03)
+		return J03_inv
+
+	def jacobian_3tip(self, joint_value):
+		# Jacobian matrix from joint 3 to end effector tip
+		# [vz, wx, wy] = J3tip*[q4_dot, q5_dot, q6_dot]
+		q1 = joint_value[0]
+		q2 = joint_value[1]
+		q3 = joint_value[2]
+		q4 = joint_value[3]
+		q5 = joint_value[4]
+		q6 = joint_value[5]
+
+		J3tip = np.zeros([3,3])
+		J3tip[0,0] = 0
+		J3tip[0,1] = 0
+		J3tip[0,2] = 1
+
+		J3tip[1,0] = 0 
+		J3tip[1,1] = 1
+		J3tip[1,2] = 0
+
+		J3tip[2,0] = 1
+		J3tip[2,1] = 0
+		J3tip[2,2] = 0
+
+		return J3tip
+
+	def invjacobian_3tip(self, joint_value):
+		# Inverse Jacobian matrix from joint 3 to end effector tip
+		# J3tip_inv*[vz, wx, wy] = [q4_dot, q5_dot, q6_dot]		
+		J3tip = self.jacobian_3tip(joint_value)
+		J3tip_inv = np.linalg.inv(J3tip)
+		return J3tip_inv
+
+
 
 if __name__ == '__main__':
 	ac = actuator_control()
