@@ -7,8 +7,10 @@ import gclib
 import time
 import galil_config
 import numpy as np
+
 import actuator_homing
 import galil_ipaddress
+
 from termcolor import colored  #for print in color
 from math import cos
 from math import acos
