@@ -8,11 +8,13 @@ import time
 import galil_config
 import numpy as np
 
-import actuator_homing
+import actuator_setzero
 import galil_ipaddress
 
 from termcolor import colored  #for print in color
 from math import cos
+from math import sin
+from math import asin
 from math import acos
 from math import pi
 
@@ -51,7 +53,7 @@ class actuator_control():
         
         #calculate q5 q6 from RCM structure parameters x1 x2 
         m1 = actuator_position[4]/4000  #unit: mm  for RE25 motor
-        m2 = actuator_position[5]/2048  #unit: mm  for RE16 motor --need update!!
+        m2 = actuator_position[5]/4096  #unit: mm  for DCX motor 
         x1 = m1+48.99  # x1=48.99 when rcm structure is in initial pose, where endtip is vertical to ground
         x2 = m2+50     # x2=50 when rcm structure is in initial pose
 
@@ -89,7 +91,7 @@ class actuator_control():
           print(colored('[ERROR] kinematic calculate error, actuator x1 position is negative'+str(x1), 'red'))
 
         actuator_position[4] = m1*4000  #unit: mm;     RE25 motor, linear motion for rcm mechanism
-        actuator_position[5] = m2*2048  #unit: mm;     for RE16 motor --need update!!
+        actuator_position[5] = m2*4096  #unit: mm;     for DCX22 motor
         return actuator_position
 
     def actuator2joint_velocity(self, actuator_velocity): #q1 for scara arm...q6 for rcm small screw motor
@@ -98,7 +100,7 @@ class actuator_control():
         joint_velocity[1] = actuator_velocity[1]/10000 #unit: degree  ---temp value, need update!!
         joint_velocity[2] = actuator_velocity[2]/10000 #unit: mm
         joint_velocity[3] = actuator_velocity[3]/2500  #unit: degree
-        joint_velocity[5] = actuator_velocity[5]/2048  #unit: mm  ---need update!!! for RE16 motor
+        joint_velocity[5] = actuator_velocity[5]/4096  #unit: mm  for DCX22 motor
       
         # calculate x1_dot, to get m1_dot: RE 25 motor velocity
         joint_position = self.tell_jointposition()
@@ -130,7 +132,7 @@ class actuator_control():
         actuator_velocity[1] = joint_velocity[1]*10000 #unit: degree; scara arm 1 ---temp value, need update!!
         actuator_velocity[2] = joint_velocity[2]*10000 #unit: mm;     Z prismatic joint
         actuator_velocity[3] = joint_velocity[3]*2500  #unit: degree; rotY joint
-        actuator_velocity[5] = joint_velocity[5]*2048  # a6_dot = q6_dot*x #unit: mm  ---need update!!! for RE16 motor
+        actuator_velocity[5] = joint_velocity[5]*4096  # a6_dot = q6_dot*x #unit: mm  for DXC22 motor
 
         # calculate x1_dot, to get m1_dot: RE 25 motor velocity
         joint_position = self.tell_jointposition()
@@ -156,7 +158,11 @@ class actuator_control():
 
     def actuator_jog(self, joint_vel): #joint jog motion - velocity control
         # convert joint vel to actuator vel
+        
+        print("joint velocities: ", joint_vel)
         actuator_vel = self.joint2actuator_velocity(joint_vel)
+
+        print("actuator velocities: ", actuator_vel)
 
         # motion command sent to galil card
         # here we swap the index of joint_vel with actuator index, because galil gard axis from A->F matches to joint 6->1
@@ -166,6 +172,7 @@ class actuator_control():
         # time.sleep(3)
         # self.g.GCommand('ST') #stop motion
         # self.g.GCommand('MO') #motor off
+        self.actuator_checkrunning()
 
 
     def actuator_incrementmotion(self, joint_inc):  #joint increment motion - position control
@@ -175,6 +182,7 @@ class actuator_control():
         inc_cmd = 'PR'+str(actuator_inc[0])+','+str(actuator_inc[1])+','+str(actuator_inc[2])+','+str(actuator_inc[3])+','+str(actuator_inc[4])+','+str(actuator_inc[5])
         self.g.GCommand(inc_cmd)
         self.g.GCommand('BG') #begin motion
+        self.actuator_checkrunning()
 
 
     def actuator_absolutemotion(self, joint_ap): #joint absolute motion - postion control
@@ -184,6 +192,7 @@ class actuator_control():
         ap_cmd = 'PA'+str(actuator_ap[0])+','+str(actuator_ap[1])+','+str(actuator_ap[2])+','+str(actuator_ap[3])+','+str(actuator_ap[4])+','+str(actuator_ap[5])
         self.g.GCommand(ap_cmd)
         self.g.GCommand('BG') #begin motion
+        self.actuator_checkrunning()
 
 
 
@@ -266,11 +275,11 @@ class actuator_control():
 if __name__ == '__main__':
     ac = actuator_control()
     joint_vel = np.zeros(6)
-    joint_vel[4] = 2
+    joint_vel[2] = 1
     i = 0
+    time_since = time.time()
     while 1:
-      i = i+1
-    #   ac.actuator_jog(joint_vel)
-    #   ac.actuator_checkrunning()
+        ac.actuator_jog(joint_vel)
+        ac.actuator_checkrunning()
 
 

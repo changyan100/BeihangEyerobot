@@ -5,6 +5,7 @@ import sys
 import string
 import gclib
 
+# TO DO: burn the initial config into the eeprom of Galil card, such that we dont need to run this every time
 
 def galil_config(g):
   # g = gclib.py() #make an instance of the gclib python class
@@ -32,13 +33,13 @@ def galil_config(g):
   #'off on error
   c('OE 1,1,3,1,1,1')
   #'servo loop settings
-  c('KP 0,0,0,0,15,90')
-  c('KD 0,0,0,0,50,480')
+  c('KP 0,0,0,0,15,30')
+  c('KD 0,0,0,0,50,100')
   c('KI 0,0,0,0,0,0')
   #'integrator limits
   c('IL 0,0,0,0,0,0')
-  c('FA 0,0,0,0,0,10')
-  c('FV 0,0,0,0,0,10')
+  c('FA 0,0,0,0,0,0')
+  c('FV 0,0,0,0,0,0')
   c('PL 0,0,0,0,0,0')
   #'pid loop offset only used for break.
   c('OF 0,0,0,0,0,0')
@@ -54,10 +55,10 @@ def galil_config(g):
   c('ER 1000,1000,1000,1000,200,200')
 
   
-  c('AC 500000,500000,500000,500000,400000,300000')
-  c('DC 500000,500000,500000,500000,400000,300000')
+  c('AC 500000,500000,500000,500000,400000,400000')
+  c('DC 500000,500000,500000,500000,400000,400000')
   #'Maximum velocities
-  c('SP 30000,30000,30000,30000,10000,10000')
+  c('SP 30000,30000,30000,30000,20000,20000')
 
   c('MG "READY!" ')
 

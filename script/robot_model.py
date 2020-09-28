@@ -240,11 +240,11 @@ class robot_model():
 		q6 = joint_value[5]
 
 		J03 = np.zeros([3,3])
-		J03[0,0] = -self.r1*sin(q1)-r234*sin(q1+q2)
-		J03[0,1] = -r234*sin(q1+q2)
+		J03[0,0] = -self.r1*sin(q1)-self.r234*sin(q1+q2)
+		J03[0,1] = -self.r234*sin(q1+q2)
 		J03[0,2] = 0
 
-		J03[1,0] = self.r1*cos(q1)+r234*cos(q1+q2) 
+		J03[1,0] = self.r1*cos(q1)+self.r234*cos(q1+q2) 
 		J03[1,1] = self.r234*cos(q1+q2)
 		J03[1,2] = 0
 
@@ -258,6 +258,7 @@ class robot_model():
 		# Inverse Jacobian matrix from joint 0 to 3
 		# J03_inv*[vx, vy, vz] = [q1_dot, q2_dot, q3_dot]
 		J03 = self.jacobian_03(joint_value)
+		# print("J03 = ", J03)
 		J03_inv = np.linalg.inv(J03)
 		return J03_inv
 
