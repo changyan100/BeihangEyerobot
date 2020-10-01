@@ -4,11 +4,11 @@
 import gclib
 import sys
 import string
-import galil_ipaddress
+import device_ip
 
 def homing():
-  ip_address=galil_ipaddress.ip_address
-    
+  ip_address=device_ip.galil_ip
+      
     # make an instance of the gclib python class
   g = gclib.py()
 #    print('gclib version:', self.g.GVersion())

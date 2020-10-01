@@ -46,7 +46,7 @@ if __name__ == '__main__':
     try:
         pub = rospy.Publisher('pedal_value', String, queue_size=10)
         rospy.init_node('pedal', anonymous=True)
-        # rate = rospy.Rate(1000) # 1 kHz
+        rate = rospy.Rate(1000) # 1 kHz
 
         pd = pedal()
         
@@ -54,7 +54,7 @@ if __name__ == '__main__':
             pedal_output = pd.pedal_detect()
             # rospy.loginfo(pedal_output)
             pub.publish(pedal_output)
-            # rate.sleep()
+            rate.sleep()
 
     except rospy.ROSInterruptException:
         pass

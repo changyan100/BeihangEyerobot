@@ -9,7 +9,7 @@ import galil_config
 import numpy as np
 
 import actuator_setzero
-import galil_ipaddress
+import device_ip
 
 from termcolor import colored  #for print in color
 from math import cos
@@ -22,7 +22,7 @@ from math import pi
 
 class actuator_control():
     def __init__(self): #set default ip address here
-        ip_address = galil_ipaddress.ip_address
+        ip_address = device_ip.galil_ip
         # make an instance of the gclib python class
         self.g = gclib.py()
         print('gclib version:', self.g.GVersion())
