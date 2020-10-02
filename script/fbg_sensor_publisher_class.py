@@ -8,6 +8,7 @@ import numpy as np
 import rospy
 from BeihangEyerobot.msg import floatlist
 from termcolor import colored  #for print in color
+import math
 
 
 class fbg_sensor():
@@ -22,21 +23,19 @@ class fbg_sensor():
         # create the streamer object instance
         self.peaks_streamer = hyperion.HCommTCPPeaksStreamer(instrument_ip, self.loop, self.queue)
         #set fiber num here
-        # self.fibernum = 3
-        self.fibernum = 2
+        self.fibernum = 3
         
         #set force dimension here
         self.force_dimension = 2
         
-        # self.calib_matrics = np.zeros([2,3])
-        self.calib_matrics = np.zeros([2,2])
+        self.calib_matrics = np.zeros([2,3])
         # update calibration matrics here
-        self.calib_matrics[0,0] = 1999000
-        self.calib_matrics[0,1] = 1999000
-        # self.calib_matrics[0,2] = 1999
-        self.calib_matrics[1,0] = 1999000
-        self.calib_matrics[1,1] = 1999000
-        # self.calib_matrics[1,2] = 1999
+        self.calib_matrics[0,0] = 269.1142
+        self.calib_matrics[0,1] = -6.936
+        self.calib_matrics[0,2] = -262.16
+        self.calib_matrics[1,0] = 186.4413
+        self.calib_matrics[1,1] = -534.44
+        self.calib_matrics[1,2] = 347.99
 
         self.initcount = 0
         self.rebias_wavelength = np.zeros(self.fibernum)
@@ -52,7 +51,7 @@ class fbg_sensor():
 
         wave_init_pool = np.zeros([self.fibernum,1000]) 
         init_flag = True
-        force = np.zeros(self.force_dimension)
+        force_pub = [0,0,0] #[force_norm, Fx, Fy]
         delt_w = np.zeros(self.fibernum)
 
         # while True:
@@ -83,10 +82,11 @@ class fbg_sensor():
                         
                         force = np.dot(self.calib_matrics, delt_s)
                         force = force*1000 #unit: mN
-                        print("force = ", force[0])
-                        print("delt_s = ", delt_s)
-
-                self.pub1.publish(force)
+                        force_norm = math.sqrt(force[0]**2 + force[1]**2)
+                        # print("force_norm = ", force_norm)
+                        # print("delt_s = ", delt_s)
+                        force_pub = [force_norm, force[0], force[1]]
+                self.pub1.publish(force_pub)
                 self.pub2.publish(peak_data['data'].data)
                 rate.sleep()
             else:
