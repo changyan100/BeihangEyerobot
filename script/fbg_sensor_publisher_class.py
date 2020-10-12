@@ -85,7 +85,7 @@ class fbg_sensor():
                         force_norm = math.sqrt(force[0]**2 + force[1]**2)
                         # print("force_norm = ", force_norm)
                         # print("delt_s = ", delt_s)
-                        force_pub = [force_norm, force[0], force[1]]
+                        force_pub = [force[0], force[1], force_norm]
                 self.pub1.publish(force_pub)
                 self.pub2.publish(peak_data['data'].data)
                 rate.sleep()

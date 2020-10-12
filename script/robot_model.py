@@ -171,10 +171,10 @@ class robot_model():
 
 		j11 = self.r234*cos(q1+q2)+self.r1*cos(q1)-(q6*sin(q1+q2)*sin(q4+q5))/2+q6*cos(q1+q2)*sin(q5)-(q6*sin(q4-q5)*sin(q1+q2))/2
 		j12 = self.r234*cos(q1+q2)-(q6*sin(q1+q2)*sin(q4+q5))/2+q6*cos(q1+q2)*sin(q5)-(q6*sin(q4-q5)*sin(q1+q2))/2
-		j15 = sin(q4)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)+q6*sin(q1+q2)*cos(q4)^2*cos(q5)
+		j15 = sin(q4)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)+q6*sin(q1+q2)*cos(q4)**2*cos(q5)
 		j21 = self.r234*sin(q1+q2)+self.r1*sin(q1)+(q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2
 		j22 = self.r234*sin(q1+q2)+(q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2
-		j25 = -sin(q4)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)-q6*cos(q1+q2)*cos(q4)^2*cos(q5)
+		j25 = -sin(q4)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)-q6*cos(q1+q2)*cos(q4)**2*cos(q5)
 		j34 = -cos(q1+q2)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)-sin(q1+q2)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)
 		j35 = cos(q1+q2)*cos(q4)*((q6*sin(q1+q2)*sin(q4+q5))/2-q6*cos(q1+q2)*sin(q5)+(q6*sin(q4-q5)*sin(q1+q2))/2)-sin(q1+q2)*cos(q4)*((q6*cos(q1+q2)*sin(q4+q5))/2+q6*sin(q1+q2)*sin(q5)+(q6*sin(q4-q5)*cos(q1+q2))/2)
 

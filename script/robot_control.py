@@ -31,9 +31,9 @@ class robot_control():
     #self.arg = arg
 
     self.rm = robot_model()
-    self.ac = actuator_control() # initialize galil gard
+    self.ac = actuator_control('ON') # initialize galil gard and servo on
 
-    self.scale_rcm = [350, 0.02, 1.2]
+    self.scale_rcm = [80, 0.06, 0.5]
     self.scale_scara = [2,2,4]
 
     self.pedal_value = "null"
@@ -44,7 +44,7 @@ class robot_control():
 
   def callback_pedal(self, data):
     self.pedal_value = data.data
-    print("pedal = ", self.pedal_value)
+    # print("pedal = ", self.pedal_value)
 
 
   def callback_joystick(self, data):
@@ -54,7 +54,7 @@ class robot_control():
     delt_z = data.axes[2]
     button = int(data.buttons[0])
 
-    print('button = ',button, 'delt_x,y,z = ', delt_x, delt_y, delt_z)
+    # print('button = ',button, 'delt_x,y,z = ', delt_x, delt_y, delt_z)
     
     if self.pedal_value == "left": # if the button is not pressed, acutate RCM stucture
       w_x = delt_x
@@ -74,6 +74,7 @@ class robot_control():
 
       #here fill the joint velocities in 1x6
       joint_vel = [0,0,0, q_dot[0,0]*self.scale_rcm[0], q_dot[1,0]*self.scale_rcm[1], q_dot[2,0]*self.scale_rcm[2]]
+
       
       # joint_vel = [0,0,0, 0, 0, 0] #for test
 

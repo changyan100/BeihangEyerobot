@@ -21,7 +21,7 @@ from math import pi
 
 
 class actuator_control():
-    def __init__(self): #set default ip address here
+    def __init__(self,servostatus='OFF'): #set default ip address here
         ip_address = device_ip.galil_ip
         # make an instance of the gclib python class
         self.g = gclib.py()
@@ -37,11 +37,11 @@ class actuator_control():
             print("\033[1;31;45m[WARN] Galil connection failed\033[0m")
             print("\033[1;31;45m[WARN] Stopping Galil script\033[0m")
             sys.exit()
-
-        #load motors configuration
-        galil_config.galil_config(self.g)
-        self.g.GCommand('SH') #servo on
-        print("Motor servos are on!")
+        if(servostatus == 'ON'):
+            #load motors configuration
+            galil_config.galil_config(self.g)
+            self.g.GCommand('SH') #servo on
+            print("Motor servos are on!")
 
 
     def actuator2joint_position(self, actuator_position): #q1 for scara arm...q6 for rcm small screw motor
@@ -124,7 +124,7 @@ class actuator_control():
         joint_velocity[4] = q5_dot  #unit: mm;     RE25 motor, linear motion for rcm mechanism
 
 
-        return joint_value
+        return joint_velocity
 
     def joint2actuator_velocity(self, joint_velocity): #q1 for scara arm...q6 for rcm small screw motor
         actuator_velocity = np.zeros(6)

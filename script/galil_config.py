@@ -27,8 +27,8 @@ def galil_config(g):
   #c('LD,,,0')            # limit disable
 
   #'set soft limits here -- need update
-  c('BL ,,-300000,-250000,-280000,-51200')
-  c('FL ,,300000,250000,72000,51200')
+  # c('BL ,,-300000,-250000,-280000,-51200')
+  # c('FL ,,300000,250000,72000,51200')
 
   #'off on error
   c('OE 1,1,3,1,1,1')
