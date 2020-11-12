@@ -33,8 +33,8 @@ def galil_config(g):
   #'off on error
   c('OE 1,1,3,1,1,1')
   #'servo loop settings
-  c('KP 0,0,0,0,15,30')
-  c('KD 0,0,0,0,50,100')
+  c('KP 0.4,0.2,0,0,15,30')
+  c('KD 1.8,2,0,0,50,100')
   c('KI 0,0,0,0,0,0')
   #'integrator limits
   c('IL 0,0,0,0,0,0')
@@ -48,17 +48,17 @@ def galil_config(g):
   #c('TL 0,0,0,0,6.6,6.6');
   #'peak torque limits
   #'todo might up the other motors to 9.99
-  c('TK 0,0,0,0,9.99,9.99')
+  c('TK 9.99,9.99,0,0,9.99,9.99')
   #' error limits, if the acceleration or speed are set above system capability
   #' these might be triggered
   #' or if the system is stuck
-  c('ER 1000,1000,1000,1000,200,200')
+  c('ER 15000,15000,1000,1000,200,200')
 
   
-  c('AC 500000,500000,500000,500000,400000,400000')
-  c('DC 500000,500000,500000,500000,400000,400000')
+  c('AC 1000000,1000000,500000,500000,400000,400000')
+  c('DC 1000000,1000000,500000,500000,400000,400000')
   #'Maximum velocities
-  c('SP 30000,30000,30000,30000,20000,20000')
+  c('SP 20000,20000,30000,30000,20000,20000')
 
   c('MG "READY!" ')
 

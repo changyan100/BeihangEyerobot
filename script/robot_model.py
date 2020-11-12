@@ -160,6 +160,7 @@ class robot_model():
 		# To do: calculate inverse kinematics for joint 3-tip here
 		pass
 
+	# Use with caution!!! Have Not been evalauted!!!
 	def jacobian_0tip(self, joint_value):
 		# Jacobian matrix from joint 0 to end effector tip
 		q1 = joint_value[0]
@@ -223,6 +224,7 @@ class robot_model():
 		
 		return J06
 
+	# Use with caution!!! Have Not been evalauted!!!
 	def invjacobian_0tip(self, joint_value):
 		J06 = self.jacobian_0tip(joint_value)
 		J06_inv = np.linalg.inv(J06)
@@ -240,12 +242,12 @@ class robot_model():
 		q6 = joint_value[5]
 
 		J03 = np.zeros([3,3])
-		J03[0,0] = -self.r1*sin(q1)-self.r234*sin(q1+q2)
-		J03[0,1] = -self.r234*sin(q1+q2)
+		J03[0,0] = self.r1*cos(q1)+self.r234*cos(q1+q2)
+		J03[0,1] = self.r234*cos(q1+q2)
 		J03[0,2] = 0
 
-		J03[1,0] = self.r1*cos(q1)+self.r234*cos(q1+q2) 
-		J03[1,1] = self.r234*cos(q1+q2)
+		J03[1,0] = self.r1*sin(q1)+self.r234*sin(q1+q2) 
+		J03[1,1] = self.r234*sin(q1+q2)
 		J03[1,2] = 0
 
 		J03[2,0] = 0
@@ -261,6 +263,26 @@ class robot_model():
 		# print("J03 = ", J03)
 		J03_inv = np.linalg.inv(J03)
 		return J03_inv
+
+
+	def invjacobian_03_direct_value(self, tip_vel, joint_value):
+		# direct calculate joint velcoties for 0 1 2 joints
+		x_dot = tip_vel[0,0]
+		y_dot = tip_vel[1,0]
+		z_dot = tip_vel[2,0]
+		q1 = joint_value[0]
+		q2 = joint_value[1]
+		q3 = joint_value[2]
+
+		M1 = self.r1*cos(q1)+self.r1*sin(q1)+self.r234*cos(q1+q2)+self.r234*sin(q1+q2)
+		N1 = self.r234*cos(q1+q2)+self.r234*sin(q1+q2)
+		M2 = self.r1*cos(q1)-self.r1*sin(q1)+self.r234*cos(q1+q2)-self.r234*sin(q1+q2)
+		N2 = self.r234*cos(q1+q2)-self.r234*sin(q1+q2)
+		q2_dot = (x_dot-y_dot-M2/M1*(x_dot+y_dot))/(-M2*N1/M1+N2)
+		q1_dot = (x_dot+y_dot)/M1-N1/M1*((x_dot-y_dot-M2/M1*(x_dot+y_dot))/(-M2*N1/M1+N2))
+		q3_dot = z_dot
+		q_dot = [q1_dot, q2_dot, q3_dot, 0,0,0]
+		return q_dot
 
 	def jacobian_3tip(self, joint_value):
 		# Jacobian matrix from joint 3 to end effector tip

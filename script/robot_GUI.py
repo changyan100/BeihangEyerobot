@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#log some data to a csv file
+#demo GUI to show key data and plot forces
 
 import rospy
 from std_msgs.msg import String
@@ -17,13 +17,13 @@ class logger(object):
 		# self.arg = arg
 	def __init__(self):
 		
-		self.jointpos = tuple([0.0,0.0,0.0,0.0,0.0,0.0])
-		self.jointvel = tuple([0.0,0.0,0.0,0.0,0.0,0.0])
-		self.tippos = tuple([0.0,0.0,0.0,0.0,0.0,0.0]) #rotation is represeted as euler in ('zyx', degrees=True)
-		self.tipvel = tuple([0.0,0.0,0.0,0.0,0.0,0.0]) 
+		self.jointpos = [0.0,0.0,0.0,0.0,0.0,0.0]
+		self.jointvel = [0.0,0.0,0.0,0.0,0.0,0.0]
+		self.tippos = [0.0,0.0,0.0,0.0,0.0,0.0] #rotation is represeted as euler in ('zyx', degrees=True)
+		self.tipvel = [0.0,0.0,0.0,0.0,0.0,0.0] 
 
-		self.fbgpeaks = tuple([0.0, 0.0, 0.0]) #[channal1, channal2, channal3]
-		self.fbgforces = tuple([0.0, 0.0, 0.0]) #[Fx, Fy, F_norm]
+		self.fbgpeaks = [0.0, 0.0, 0.0] #[channal1, channal2, channal3]
+		self.fbgforces = [0.0, 0.0, 0.0] #[Fx, Fy, F_norm]
 
 		self.joystick = [0.0, 0.0, 0.0, 0] #[rx, ry, rz, button]
 
@@ -69,7 +69,7 @@ class logger(object):
 	def callback_joystick(self, data):
 		# acutate the robot when having input from the joystick
 		self.joystick[0] = data.axes[0]
-		self.joystick[1] = (data.axes[1])
+		self.joystick[1] = data.axes[1]
 		self.joystick[2] = data.axes[2]
 		self.joystick[3] = data.buttons[0]
 
@@ -89,11 +89,9 @@ class logger(object):
 			csvwriter.writerow(header)
 			while not rospy.is_shutdown():
 				timestamp = [time.time()]
-				pedal_value = tuple(self.pedal)
-				data = tuple(timestamp)+self.tippos+self.jointpos+self.tipvel+self.jointvel+self.fbgforces+self.fbgpeaks+tuple(self.joystick)+pedal_value
+				pedal_value = [self.pedal]
+				data = timestamp+self.tippos+self.jointpos+self.tipvel+self.jointvel+self.fbgforces+self.fbgpeaks+self.joystick+pedal_value
 				csvwriter.writerow(data)
-				time.sleep(0.05) 
-
 	
 
 if __name__ == '__main__':

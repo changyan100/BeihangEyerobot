@@ -46,10 +46,10 @@ class actuator_control():
 
     def actuator2joint_position(self, actuator_position): #q1 for scara arm...q6 for rcm small screw motor
         joint_position = np.zeros(6)
-        joint_position[0] = actuator_position[0]/10000 #unit: degree  ---temp value, need update!!
-        joint_position[1] = actuator_position[1]/10000 #unit: degree  ---temp value, need update!!
+        joint_position[0] = actuator_position[0]/58260/180*pi #unit: - rad  
+        joint_position[1] = actuator_position[1]/61915/180*pi #unit: - rad  
         joint_position[2] = actuator_position[2]/10000 #unit: mm
-        joint_position[3] = actuator_position[3]/2500  #unit: degree
+        joint_position[3] = actuator_position[3]/2500/180*pi  #unit: - rad
         
         #calculate q5 q6 from RCM structure parameters x1 x2 
         m1 = actuator_position[4]/4000  #unit: mm  for RE25 motor
@@ -69,10 +69,10 @@ class actuator_control():
 
     def joint2actuator_position(self, joint_position): #q1 for scara arm...q6 for rcm small screw motor
         actuator_position = np.zeros(6)
-        actuator_position[0] = joint_position[0]*10000 #unit: degree; scara arm 0 ---temp value, need update!! 
-        actuator_position[1] = joint_position[1]*10000 #unit: degree; scara arm 1 ---temp value, need update!!
+        actuator_position[0] = joint_position[0]*180/pi*58260 #unit: rad; scara arm 0  
+        actuator_position[1] = joint_position[1]*180/pi*61915 #unit: rad; scara arm 1 
         actuator_position[2] = joint_position[2]*10000 #unit: mm;     Z prismatic joint
-        actuator_position[3] = joint_position[3]*2500  #unit: degree; rotY joint
+        actuator_position[3] = joint_position[3]*180/pi*2500  #unit: rad; rotY joint
         
         #calculate rcm structure parameter x1 x2 from q5 q6
         q5 = joint_position[4]
@@ -96,10 +96,10 @@ class actuator_control():
 
     def actuator2joint_velocity(self, actuator_velocity): #q1 for scara arm...q6 for rcm small screw motor
         joint_velocity = np.zeros(6)
-        joint_velocity[0] = actuator_velocity[0]/10000 #unit: degree  ---temp value, need update!!
-        joint_velocity[1] = actuator_velocity[1]/10000 #unit: degree  ---temp value, need update!!
+        joint_velocity[0] = actuator_velocity[0]/58260/180*pi #unit: rad 
+        joint_velocity[1] = actuator_velocity[1]/61915/180*pi #unit: rad  
         joint_velocity[2] = actuator_velocity[2]/10000 #unit: mm
-        joint_velocity[3] = actuator_velocity[3]/2500  #unit: degree
+        joint_velocity[3] = actuator_velocity[3]/2500/180*pi  #unit: rad
         joint_velocity[5] = actuator_velocity[5]/4096  #unit: mm  for DCX22 motor
       
         # calculate x1_dot, to get m1_dot: RE 25 motor velocity
@@ -128,10 +128,10 @@ class actuator_control():
 
     def joint2actuator_velocity(self, joint_velocity): #q1 for scara arm...q6 for rcm small screw motor
         actuator_velocity = np.zeros(6)
-        actuator_velocity[0] = joint_velocity[0]*10000 #unit: degree; scara arm 0 ---temp value, need update!! 
-        actuator_velocity[1] = joint_velocity[1]*10000 #unit: degree; scara arm 1 ---temp value, need update!!
+        actuator_velocity[0] = joint_velocity[0]*180/pi*58260 #unit: rad; scara arm 0 
+        actuator_velocity[1] = joint_velocity[1]*180/pi*61915 #unit: rad; scara arm 1 
         actuator_velocity[2] = joint_velocity[2]*10000 #unit: mm;     Z prismatic joint
-        actuator_velocity[3] = joint_velocity[3]*2500  #unit: degree; rotY joint
+        actuator_velocity[3] = joint_velocity[3]*180/pi*2500  #unit: rad; rotY joint
         actuator_velocity[5] = joint_velocity[5]*4096  # a6_dot = q6_dot*x #unit: mm  for DXC22 motor
 
         # calculate x1_dot, to get m1_dot: RE 25 motor velocity

@@ -11,8 +11,11 @@ class pedal():
     def __init__(self):
         self.infile_path = "/dev/input/event7"
         self.EVENT_SIZE = struct.calcsize("llHHI")
+        print("1")
         self.file = open(self.infile_path, "rb")
+        print("2")
         self.event = self.file.read(self.EVENT_SIZE)
+        print("3")
 
         self.pedal_reading = "null"
 
@@ -47,14 +50,16 @@ if __name__ == '__main__':
         pub = rospy.Publisher('pedal_value', String, queue_size=10)
         rospy.init_node('pedal', anonymous=True)
         rate = rospy.Rate(1000) # 1 kHz
-
+        print("I am in program")
         pd = pedal()
         
         while not rospy.is_shutdown():
+            print("I am in while")
             pedal_output = pd.pedal_detect()
             # rospy.loginfo(pedal_output)
             pub.publish(pedal_output)
             rate.sleep()
+            print(pedal_output)
 
     except rospy.ROSInterruptException:
         pass
